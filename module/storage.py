@@ -1,5 +1,5 @@
 import pandas as pd
-from core.db import db
+from core.database import db
 from typing import Dict, Any, Optional
 from datetime import datetime
 from pandas.core.frame import DataFrame

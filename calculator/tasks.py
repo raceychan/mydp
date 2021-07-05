@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
-from core.battery import Battery
-from calculator.shortagecalculator import shortagecalculator
+
+
 from celery import Celery
-import pandas as pd
-import numpy as np
 from calculator.shortagecalculator import shortagecalculator
-from core.battery import Battery
+from core.battery import Batter
 
 app = Celery(
     'tasks', broker='amqps://b-ab4aee85-b458-4b7b-8f91-85efe84180ea.mq.ap-east-1.amazonaws.com:5671')
@@ -30,7 +28,7 @@ class OrderingData:
     fd = pd.read_excel('录入预估-2021.05.14.xlsx')
     fd = fd.iloc[:, 1:11]
     fd.columns = ['sku', 'site', '2021-05', '2021-06', '2021-07',
-                '2021-08', '2021-09', '2021-10', '2021-011', '2021-12']
+                  '2021-08', '2021-09', '2021-10', '2021-011', '2021-12']
     for month in range(8):
         fd[f'predsum_{fd.iloc[:, 2:2+(month+1)].columns[month]}'] = fd.iloc[:,
                                                                             2: 2+(month+1)].sum(axis=1)
@@ -52,7 +50,7 @@ class OrderingData:
 
     sto_sum = shortagecalculator.get_stosum(sto_data=sto_data)
     dom_sum = sto_data[['ssku', 'p_sku', 'domestic_sum']
-                    ].groupby('ssku').first().reset_index()
+                       ].groupby('ssku').first().reset_index()
     total_sum = pd.merge(sto_sum, dom_sum, how='left', on=['ssku', 'p_sku'])
     total_sum.rename(columns={'ssku': 'sku'}, inplace=True)
     pred_data['sku'] = pred_data['sku'].apply(lambda x: str(x))

@@ -4,7 +4,7 @@ from typing import Dict, Optional, Any
 from pandas.core.frame import DataFrame
 
 from core.publisher import Publisher
-from core.db import db
+from core.database import db
 
 
 class Sales(Publisher):
@@ -32,9 +32,7 @@ class Sales(Publisher):
 #   @notify.data
     def sales_data(self, country: str = 'us', **kwargs):
         country = country or kwargs['country']
-        with db.con as conn:
-            raw_sales_data = pd.read_sql(
-                sql=self.sales_sql(country), con=conn)
+        raw_sales_data = db.read_sql(self.sales_sql(country))
         target_date = datetime.today().date()-timedelta(days=2)
         raw_sales_data = raw_sales_data[raw_sales_data['date'] < target_date]
         raw_sales_data['date'] = pd.to_datetime(raw_sales_data['date'])
