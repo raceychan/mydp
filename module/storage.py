@@ -12,7 +12,7 @@ from core.config import settings
 class Storage(Publisher):
     def __init__(self, events=None, **kwargs: Dict[str, Any]):
         super(Storage, self).__init__(events=events)
-        self.__dict__.update(kwargs)
+        self.__dict__.update(**kwargs)
         self.register()
         self.notify(event='instantiate',
                     message=f'''instantiated at {datetime.now().strftime('%Y-%m-%d %H:%M')}''')
