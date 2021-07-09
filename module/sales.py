@@ -19,6 +19,9 @@ class Sales(Publisher):
         self.sto_data = pd.DataFrame()
 
 #   @notify.sql
+#   by decorating this with the Publisher class
+#   we record any changess apply to the params of sql_update methods
+#   then apply it to data_update methods, to avoid missing params in data_update methods
     def sales_sql(self, country: str):
         _sales_sql = f'''
                             select '{country}' as country, sku, purchase_date as date, units_ordered as sales

@@ -18,6 +18,8 @@ class Broker:
 
     @property
     def con(self):
+        ''' Todo: add a retry decorator
+        '''
         if self.__con.is_closed:
             self.__con = pika.BlockingConnection(
                 settings.RABBITMQ_CONNECTION_PARAMETER)
@@ -42,15 +44,6 @@ class Broker:
 
     def unsubscribe(self, queue):
         self.channel.queue_delete(queue=queue)
-
-    def notify(self, topic, queue: str, body: str, exchange: str = ''):
-        topic = pika.BasicProperties(content_type=topic)
-        body = json.dumps(body)
-        self.channel.basic_publish(exchange=exchange,
-                                   routing_key=queue,
-                                   body=body,
-                                   properties=topic
-                                   )
 
 
 broker = Broker()

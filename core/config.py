@@ -41,8 +41,8 @@ class Settings(BaseSettings):
     def assemble_db_url(cls, v: Optional[str], values: Dict[str, Any], config, field) -> str:
         if v and isinstance(v, str):
             return v
-        db_params_schema = values.get('DB_PARAMS_SCHEMA')
-        db_params = {param: values.get(f'MYSQL_{param.upper()}')
+        db_params_schema: Dict[str, Any] = values.get('DB_PARAMS_SCHEMA', '')
+        db_params = {param: values.get(f'MYSQL_{param.upper()}', '')
                      for param in db_params_schema}
         return build_url(db_params=db_params, db_params_schema=db_params_schema)
 
@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     def assemble_aysnc_url(cls, v: Optional[str], values: Dict[str, Any], config, field) -> Any:
         if v and isinstance(v, str):
             return v
-        db_params_schema = values.get('DB_PARAMS_SCHEMA')
+        db_params_schema: Dict[str, Any] = values.get('DB_PARAMS_SCHEMA', '')
         db_params = {param: values.get(f'MYSQL_{param.upper()}')
                      for param in db_params_schema}
         db_params['MYSQL_DRIVER'] = 'aiomysql'
@@ -77,9 +77,11 @@ class Settings(BaseSettings):
         credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         ssl_options = pika.SSLOptions(context)
-
         connection_params = pika.ConnectionParameters(
-            port=RABBITMQ_PORT, host=RABBITMQ_HOST, credentials=credentials, ssl_options=ssl_options)
+            port=RABBITMQ_PORT,
+            host=RABBITMQ_HOST,
+            credentials=credentials,
+            ssl_options=ssl_options)
         return connection_params
 
 

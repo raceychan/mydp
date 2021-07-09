@@ -21,12 +21,14 @@ class DataTemplate:
         self.template: ModelMetaclass = template
         self.data: Union[DataFrame, List[Dict]] = data
 
-    def __call__(self) -> DataFrame:
+    def __call__(self) -> Optional[DataFrame]:
         if isinstance(self.data, DataFrame):
             return pd.DataFrame([self.template(**record).dict() for record in self.data.to_dict(orient='records')])
         elif isinstance(self.data, list):
             if isinstance(self.data[randint(0, len(self.data)-1)], dict):
                 return pd.DataFrame([self.template(**record).dict() for record in self.data])
+            else:
+                raise Exception('unknown return')
 
     @property
     def default(self):

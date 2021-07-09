@@ -5,7 +5,7 @@ import types
 import sqlalchemy
 
 from time import time
-from typing import Callable, Optional, Dict, Any, Set,Union
+from typing import Callable, Optional, Dict, Any, Set, Union
 from pandas.core.frame import DataFrame
 from functools import wraps, partial
 
@@ -37,7 +37,7 @@ def tpck(fn: Callable = None, *, debug: bool = True) -> Callable:
     return wrapper
 
 
-def set_column_types(df: Optional[DataFrame] = None) -> dict:
+def set_column_types(df: DataFrame) -> dict:
     if not df:
         print("Input is empty")
 
@@ -71,22 +71,22 @@ def timeit(func: Callable) -> Callable:
     return _time_it
 
 
-def build_url(db_params, db_params_schema: Dict[str, str]) -> str:
-    v: Dict[str, str]= {param: db_params.get(key) for key in db_params.keys()
+def build_url(db_params, db_params_schema: Dict[str, Any]) -> str:
+    v: Dict[str, str] = {param: db_params.get(key) for key in db_params.keys()
                          for param in db_params_schema
                          if (param in key or param.upper() in key)}
     if v.get('driver'):
-        url = v.get('db') + '+' + v.get('driver') + '://'
+        url = v.get('db', '') + '+' + v.get('driver', '') + '://'
     else:
         url = v.get('db', '') + '://'
     url += v.get('user', '')
     url += ':' if v.get('password') else ''
     url += '@' if v.get('user') or v.get('password') else ''
     url += v.get('host', '')
-    url += ':' + v.get('port') if v.get('port') else ''
+    url += ':' + v.get('port', '') if v.get('port') else ''
     url += v.get('path', '')
-    url += '?' + v.get('query') if v.get('query') else ''
-    url += '#' + v.get('fragment') if v.get('fragment') else ''
+    url += '?' + v.get('query', '') if v.get('query') else ''
+    url += '#' + v.get('fragment', '') if v.get('fragment') else ''
     return url
 
 
@@ -118,7 +118,7 @@ class _Profiler:
             return types.MethodType(self, instance)
 
 
-def profiler(func: Callable = None, *args, **kwargs):
+def profiler(func: Optional[Callable] = None, *args, **kwargs):
     if func:
         return _Profiler(func)
     else:

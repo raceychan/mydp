@@ -7,10 +7,21 @@ from core.broker import broker
 
 
 class Publisher:
+    ''' Todo:
+        1. make Publisher a class decorator
+        2. enable it saves attrs of decorated method
+
+        refer: https://github.com/pallets/click/blob/29df8795dc146ddea328e458068185d3314820e5/src/click/decorators.py
+        the users of Publisher class are all different data modules 
+        that are in charge of extracting data from the outside sourcs
+        we extracting the params from method sql_update and save it to class Publisher
+        then paste it to method data_update
+    '''
+
     def __init__(self, queue: str = 'main', broker=broker):
         self.broker = broker
-        self.channel = self.broker.channel
         self.queue = queue
+        self.broker.subscribe(queue)
 
     def publish(self, exchange='',
                 topic='sql_update',
@@ -19,21 +30,15 @@ class Publisher:
 
         topic = pika.BasicProperties(content_type=topic)
         body = json.dumps(body)
-        self.channel.basic_publish(exchange=exchange,
-                                   routing_key=queue,
-                                   body=body,
-                                   properties=topic)
+
+        self.broker.channel.basic_publish(exchange=exchange,
+                                          routing_key=queue,
+                                          body=body,
+                                          properties=topic)
 
         print(f'''sent message: {body} 
                 to queue: {queue} 
                 with topic: {topic}''')
-
-
-
-
-
-
-
 
 
 # class Publisher:

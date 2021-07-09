@@ -6,28 +6,33 @@ from typing import Callable
 from core.broker import broker
 ''' despite the broker instance of 
     class Broker is imported in different
-    files, it remains the same instance everywhere 
+    files, it remains the same instance everywhere
+    (within the same python process)
 '''
 
 
 class Subscriber:
-    def __init__(self, queue='main', broker=broker):
+    def __init__(self, queue: str = 'main', broker=broker):
         self.queue = queue
         self.broker = broker
-        self.channel = self.broker.channel
 
-    def callback(self, ch, method, topic, body):
+    def callback(self, channel, method, topic, body):
         data = json.loads(body)
 
         if topic.content_type == 'sql_update':
-            print(f'''
-                    receive topic: {topic} and 
-                    body: {body} 
-                    at {datetime.now().date}''')
+            print('test_if_statement')
+
+        print(f'''
+                receive topic: {topic} and 
+                body: {data} 
+                at {datetime.now().date}''')
+        self.broker.channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def register(self, queue: str = 'main',
                  auto_ack: bool = False,
                  callback: Callable = None):
+        ''' register as a consumer'''
+
         self.broker.channel.basic_consume(queue=self.queue,
                                           auto_ack=auto_ack,
                                           on_message_callback=self.callback)
@@ -54,3 +59,4 @@ class Subscriber:
 
 
 # manager = Manager()
+
