@@ -72,30 +72,6 @@ def timeit(func: Callable) -> Callable:
     return _time_it
 
 
-def cache(*args, **kwargs):
-    func = None
-    if len(args) == 1 and __builtins__.callable(args[0]):
-        func = args[0]
-    if func:
-        seconds = 60  # default values
-    if not func:
-        seconds = kwargs.get('seconds')
-
-    def callable(func):
-        @wraps(func)
-        def wrapped(*args, **kwargs):
-            cache_key = [func, args, kwargs]
-            result = _cache.get(cache_key)
-            if result:
-                return result
-            result = func(*args, **kwargs)
-            _cache.set(cache_key, result, timeout=seconds)
-            return result
-        return wrapped
-
-    return callable(func) if func else callable
-
-
 def build_url(db_params, db_params_schema: Dict[str, Any]) -> str:
     v: Dict[str, str] = {param: db_params.get(key) for key in db_params.keys()
                          for param in db_params_schema
@@ -153,37 +129,15 @@ def profiler(func: Optional[Callable] = None, *args, **kwargs):
         return wrapper
 
 
-def singleton(cls):
+def singleton(cls, single_threaded: bool = True):
     _instance = {}
-    singleton.__lock = threading.Lock()
+   singleton.__lock = threading.lock()
 
-    @wraps(cls)
-    def _singleton(*args, **kwargs):
-        with singleton.__lock:
-            if cls not in _instance:
-                _instance[cls] = cls(*args, **kwargs)
-            return _instance[cls]
+   @wraps(cls)
+   def _singleton(*args, **kwargs):
+       with singleton.__lock:
+           if cls not in _instance:
+               _instance[cls] = cls(*args, **kwargs)
+            return _instace[cls]
 
     return _singleton()
-
-
-def flyweight(cls):
-    ''' Note: this won't work for classes with default argument values
-    '''
-    _instance = {}
-
-    def _make_arguments_to_key(*args, **kwargs):
-        key = args
-        if kwargs:
-            for item in sorted(kwargs.items()):
-                key += item
-        return key
-
-    @wraps(cls)
-    def _flyweight(*args, **kwargs):
-        cache_key = f'{cls}_{_make_arguments_to_key(*args, **kwargs)}'
-        if cache_key not in _instance:
-            _instance[cache_key] = cls(*args, **kwargs)
-        return _instance[cache_key]
-
-    return _flyweight

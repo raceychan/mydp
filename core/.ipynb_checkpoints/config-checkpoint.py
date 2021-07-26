@@ -35,26 +35,21 @@ class Settings(BaseSettings):
     DB_PARAMS_SCHEMA: Set[str] = {
         'db', 'driver', 'user', 'password', 'host', 'port'}
 
-    DATABASE_URL: Optional[str] = ''
+    SQLALCHEMY_DATABASE_URI: Optional[str] = ''
 
-    @validator("DATABASE_URL", pre=True)
-    def assemble_db_url(cls, v: Optional[str], values: Dict[str, Any], config, field, **kwargs) -> str:
-        ''' TODO: receive **kwargs to update db_params
-        '''
+    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    def assemble_db_url(cls, v: Optional[str], values: Dict[str, Any], config, field) -> str:
         if v and isinstance(v, str):
             return v
         db_params_schema: Dict[str, Any] = values.get('DB_PARAMS_SCHEMA', '')
-        db_type = kwargs.get('db_type', 'MYSQL')
-        db_params = {param: values.get(f'{db_type}_{param.upper()}', '')
+        db_params = {param: values.get(f'MYSQL_{param.upper()}', '')
                      for param in db_params_schema}
         return build_url(db_params=db_params, db_params_schema=db_params_schema)
 
-    ASYNC_DATABASE_URL: Optional[str] = ''
+    SQLALCHEMY_ASYNC_DB_URL: Optional[str] = ''
 
-    @validator("ASYNC_DATABASE_URL", pre=True)
+    @validator("SQLALCHEMY_ASYNC_DB_URL", pre=True)
     def assemble_aysnc_url(cls, v: Optional[str], values: Dict[str, Any], config, field) -> Any:
-        ''' TODO: re-write to be like: return self.assemble_db_url(db_driver = 'aiomysql')
-        '''
         if v and isinstance(v, str):
             return v
         db_params_schema: Dict[str, Any] = values.get('DB_PARAMS_SCHEMA', '')
@@ -72,7 +67,7 @@ class Settings(BaseSettings):
     RMQ_CON_PARAM: Optional[Any]
 
     @validator('RMQ_CON_PARAM', pre=True)
-    def assemble_mq_con(cls, v: Optional[str], values: Dict[str, Any], config, field) -> ConnectionParameters:
+    def assemble_mb_con(cls, v: Optional[str], values: Dict[str, Any], config, field) -> ConnectionParameters:
         if v and isinstance(v, str):
             return v
         RABBITMQ_USER = values.get('RABBITMQ_USER')
