@@ -25,9 +25,8 @@ class Connection(ABC):
                 self.con_param)
             return obj.__dict__[str(self.con_param)]
 
-    def __set__(self, obj, value)-> None:
+    def __set__(self, obj, value) -> None:
         raise Exception('Connection Class Is Immutable')
-
 
     @abstractmethod
     def __delete__(self, obj):
@@ -50,27 +49,23 @@ class RabbitMQConnection(Connection):
         self.con_param = con_param
         self.con = None
         self.con_num = 1
-    
-    def __set_name__(self, cls, name)->None:
+
+    def __set_name__(self, cls, name) -> None:
         self.name = name
-    
-    def __get__(self, obj, cls)->BlockingConnection:
+
+    def __get__(self, obj, cls) -> BlockingConnection:
         con = self.__pool.get(f'con_{self.con_num}')
         if con and con.is_open:
   #      if self.con and self.con.is_open:
             return self.__pool.get(f'con_{self.con_num}')
-        self.__pool.update({f'con_{self.con_num}':self.build_connection(self.con_param)})
-        self.con_num +=1
+        self.__pool.update({f'con_{self.con_num}': self.build_connection(self.con_param)})
+        self.con_num += 1
         self.con_num %= self.max_con
 #        self.con = self.build_connection(self.con_param)
         return self.__pool.get(f'con_{self.coun_num}')
 
-    def __set__(self, obj, value)-> None:
+    def __set__(self, obj, value) -> None:
         raise Exception('Connection Class Is Immutable')
-
-    # def channel(self):
-    #     try:
-    #         channel = self.
 
     def build_connection(self, con_param) -> BlockingConnection:
         connection = BlockingConnection(con_param)
@@ -78,3 +73,5 @@ class RabbitMQConnection(Connection):
 
     def __delete__(self, obj):
         obj.__dict__[str(self.con_param)].close()
+
+

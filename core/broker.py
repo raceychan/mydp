@@ -9,12 +9,12 @@ from conn.conn import RabbitMQConnection
 
 
 class Broker:
-    ''' Every instance of the Broker class would
+    """ Every instance of the Broker class would
         create a new channel for it to run with
         multi-threads at the same time
         we can limit the number of connections 
         using the object pool pattern
-    '''
+    """
 
     connection = RabbitMQConnection(settings.RMQ_CON_PARAM)
 

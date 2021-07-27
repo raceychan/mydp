@@ -13,9 +13,12 @@ from core.config import defaults
 
 
 class DataTemplate:
-    ''' DataTemplate receives a series of dict objects then 
+    """ DataTemplate receives a series of dict objects then 
         validates them via pydantic module 
-    '''
+        referr: 1. https://ianwhitestone.work/data-templates-with-pydantic/
+                2. https://datascience.statnett.no/2020/05/11/how-we-validate-data-using-pydantic/
+                3. https://engineering.upside.com/building-better-machine-learning-feature-validation-using-pydantic-2fc99990faf0
+    """
 
     def __init__(self, template: ModelMetaclass, data: DataFrame):
         self.template: ModelMetaclass = template
@@ -23,12 +26,19 @@ class DataTemplate:
 
     def __call__(self) -> Optional[DataFrame]:
         if isinstance(self.data, DataFrame):
-            return pd.DataFrame([self.template(**record).dict() for record in self.data.to_dict(orient='records')])
+            return pd.DataFrame(
+                [
+                    self.template(**record).dict()
+                    for record in self.data.to_dict(orient="records")
+                ]
+            )
         elif isinstance(self.data, list):
-            if isinstance(self.data[randint(0, len(self.data)-1)], dict):
-                return pd.DataFrame([self.template(**record).dict() for record in self.data])
+            if isinstance(self.data[randint(0, len(self.data) - 1)], dict):
+                return pd.DataFrame(
+                    [self.template(**record).dict() for record in self.data]
+                )
             else:
-                raise Exception('unknown return')
+                raise Exception("unknown return")
 
     @property
     def default(self):
@@ -43,8 +53,8 @@ class DataMissingError(Exception):
 
 
 class Order(BaseModel):
-    sku: str = 'empty_sku'
-    site: str = 'us'
+    sku: str = "empty_sku"
+    site: str = "us"
     storage_to_send: Optional[int] = 0
     domestic_sum: Optional[int] = 0
     predsum: int = 0
@@ -65,7 +75,7 @@ class Order(BaseModel):
     #       'a product cant be missed both predsum and shortage')
     #    return values
 
-    @validator('*', pre=True)
+    @validator("*", pre=True)
     def fill_na_with_default(cls, value, config, field):
         if pd.isna(value):
             return defaults.null
