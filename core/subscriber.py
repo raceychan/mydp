@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Callable
 
 from core.broker import broker
-''' despite the broker instance of 
+''' despite the broker instance of
     class Broker is imported in different
     files, it remains the same instance everywhere
     (within the same python process)
@@ -22,8 +22,8 @@ class Subscriber:
             print('test_if_statement')
 
         print(f'''
-                receive topic: {topic} and 
-                body: {data} 
+                receive topic: {topic} and
+                body: {data}
                 at {datetime.now().date}''')
         self.broker.channel.basic_ack(delivery_tag=method.delivery_tag)
 

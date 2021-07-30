@@ -27,7 +27,7 @@ class Battery:
         self.broker = broker
 
     def __getattr__(self, attr_name: str) -> Union[Any, Callable]:
-        ''' Usage: sales = Battery('sales', country='us') 
+        ''' Usage: sales = Battery('sales', country='us')
                        data = sales.sales_data
         '''
         attr = getattr(self.model, attr_name)
@@ -38,5 +38,4 @@ class Battery:
         def wrapper(*args, **kwargs):
             return attr(*args, **kwargs)
         return wrapper
-
 

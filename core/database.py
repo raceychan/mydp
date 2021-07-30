@@ -68,5 +68,6 @@ class DataBase:
             dataframe = DataFrame(data=data.fetchall(), columns=data.keys())
         return dataframe
 
-
 db = DataBase()
+
+

@@ -15,7 +15,7 @@ class Publisher:
         2. enable it saves attrs of decorated method
 
         refer: https://github.com/pallets/click/blob/29df8795dc146ddea328e458068185d3314820e5/src/click/decorators.py
-        the users of Publisher class are all different data modules 
+        the users of Publisher class are all different data modules
         that are in charge of extracting data from the outside sourcs
         we extracting the params from method sql_update and save it to class Publisher
         then paste it to method data_update
@@ -24,18 +24,18 @@ class Publisher:
         make pub a class
         with a function decorator register
         that turns the method decorated
-        into a Register class, which shares states with pub 
+        into a Register class, which shares states with pub
 
         where app is a instance of a Callable class
-        task is a method of the Callable class and also 
-        a function decorator which turns the function 
+        task is a method of the Callable class and also
+        a function decorator which turns the function
         it decorates into a class
         reference: Celery https://github.com/celery/celery/blob/52b6238a87f80c3c63d79595deb375518af95372/celery/app/base.py#L464
         class Celery:
             def task(self, *args, **opts):
                 'Decorator to create a task class out of any callable'
                     def _task_from_fun(self, fun, name=None, base=None, bind=False, **options):
-                        name = name 
+                        name = name
                         base = self.Task
                         task = type(fun.__name__, (base,)
     '''
@@ -49,7 +49,7 @@ class Publisher:
                 queue='main',
                 body: str = 'hello world',
                 exchange='',):
-        ''' this should be a decorator 
+        ''' this should be a decorator
         '''
         self.broker.subscribe(queue)
         topic = pika.BasicProperties(content_type=topic)
@@ -60,8 +60,8 @@ class Publisher:
                                           body=body,
                                           properties=topic)
 
-        print(f'''sent message: {body} 
-                to queue: {queue} 
+        print(f'''sent message: {body}
+                to queue: {queue}
                 with topic: {topic}''')
 
 

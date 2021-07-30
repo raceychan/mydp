@@ -6,6 +6,7 @@ import types
 import sqlalchemy
 
 from time import time
+from datetime import datetime
 from typing import Callable, Optional, Dict, Any, Set, Union
 from pandas.core.frame import DataFrame
 from functools import wraps, partial
@@ -187,3 +188,25 @@ def flyweight(cls):
         return _instance[cache_key]
 
     return _flyweight
+
+class Clock:
+    def __init__(self,func):
+        self._locals = locals()
+        self._without_params = True
+        self.time = self.click()
+
+        if func and inspect.isfunction(func):
+            self.func = func
+            wraps(self.func)
+
+        self._time = datetime.now()
+        self._snap_time = self.click()
+
+    def __get__(self):
+        pass
+
+    def __set__(self):
+        pass
+
+    def click(self):
+        self._snap_time = datetime.now()

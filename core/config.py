@@ -91,5 +91,5 @@ class Settings(BaseSettings):
         return connection_params
 
 
-settings = Settings()
+settings = Settings(_env_file='core\\.env')
 defaults = Settings.DefaultValues()

@@ -112,6 +112,7 @@ class Decorator:
             return wrapper
 
 # works with methods inside class
+# bug: does not work with func without params
 class Decorator:
     def __init__(self, func=None, *deco_args, name='race', **deco_kwargs):
         self._locals = locals()
